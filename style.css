@@ -21,6 +21,14 @@ body {
   height: 30%;
   background-color: antiquewhite;
   margin-top: 10px;
+  position: relative;
+}
+
+.screenNumber {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  font-size: 25px;
 }
 
 .numberContainer,
