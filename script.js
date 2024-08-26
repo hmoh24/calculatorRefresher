@@ -11,17 +11,23 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-    return a / b; 
+    return b ===0 ? undefined : a / b; 
 }
 
 function operate(operator, a, b) {
     return operator(a, b);
 }
 
+function checkDecimalPlaces(float) {
+    if (float && float !== '' && float.toString().length > 1 && !Number.isInteger(float)) {
+        return float.toString().split('.')[1].length;
+    }}
+
 function updateScreenValues() {
+    if ( checkDecimalPlaces(currentNumber) > 5 ) currentNumber = Number(Number(currentNumber).toFixed(5));
+    if ( checkDecimalPlaces(currentNumber) > 5) storedNumber = Number((storedNumber).toFixed(5));
     screenNumber.textContent = currentNumber;
     storedNumberElement.textContent = storedNumber;
-
 }
 
 
@@ -31,23 +37,33 @@ let selectedNumber;
 let currentNumber = '';
 let storedNumber = '';
 let selectedOperator;
-// let resultToggle = false;
+let resultToggle = false;
 
 const numberButtonsArray = [...document.getElementsByClassName('numbers')];
 const numberButtonsContainer = document.getElementsByClassName('numberContainer')[0];
 
 numberButtonsContainer.addEventListener('click', (e) => {
     if (e.target.id === 'equal') {
-        if (currentNumber && storedNumber) {
+        if ( (currentNumber || currentNumber ===0) && (storedNumber || storedNumber ===0)) {
             currentNumber = selectedOperator(storedNumber, currentNumber);
             storedNumber = '';
             updateScreenValues();
+            resultToggle = true;
+        }
+    }
+    else if (e.target.id === '.') {
+        if (Number.isInteger(currentNumber)) {
+            console.log(true)
+            currentNumber = currentNumber + '.'
         }
     }
     else if (e.target.className === 'numbers') {
         selectedNumber = Number(e.target.id);
-        if (currentNumber === 0) {
-            currentNumber = selectedNumber
+        if (resultToggle && storedNumber === '') {
+
+            storedNumber = currentNumber
+            currentNumber = selectedNumber;
+            resultToggle = false;
         }
         else {
             currentNumber = Number('' + currentNumber + selectedNumber);
@@ -79,7 +95,14 @@ operatorContainer.addEventListener('click', (e) => {
         }
         console.log('current', currentNumber, 'stored', storedNumber, typeof storedNumber, 'selectedop', selectedOperator);
         console.log(!storedNumber)
-        if (currentNumber && (!storedNumber && storedNumber !== 0)) {
+        if (e.target.id === 'clear') {
+            currentNumber = '';
+            storedNumber = '';
+            selectedOperator = undefined;
+            resultToggle = false;
+            updateScreenValues();
+        }
+        if ( (currentNumber || currentNumber === 0) && (!storedNumber && storedNumber !== 0)) {
             selectedOperator = operatorValue;
             storedNumber = currentNumber;
             currentNumber = ''
@@ -95,36 +118,8 @@ operatorContainer.addEventListener('click', (e) => {
             console.log('b')
         }
     }
-})
+});
 
 
 
-
-// number is set
-// click operator, set operator value
-// empty current number, and set it as prevnumber
-// set new number, set as current number
-// click equals - evaluate operation according to variables
-
-//edge cases
-//operator clicked first? do nothing
-//number set, equals clicked, return current number as screen number and prev number
-//number set, operator clicked, second number set, operator clicked again
-//this should evaluate first operation, store result as prev value, set new operator, be ready for second value
-
-
-//current number is set
-//operator is clicked
-// when operator is clicked, set current operator value 
-// stored number is set to current number and current number is set to '' empty
-// select a new number
-// when a new number is set, operator should be set to empty/null
-// when operator is clicked again, value is calculated, stored num is set to empty, current value is set to result of 
-//operation
-// stored num is empty, operator is set to number that was clicked, current num is the result
-// on second click of operator, next number click should be the second operand
-
-
-//condition is current num is set, prev num is empty, and operator function is set 
-//starting condition is current num is set, prev num is empty, operator function is not set
 
