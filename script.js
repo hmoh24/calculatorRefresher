@@ -1,6 +1,4 @@
 function add(a, b) {
-    console.log(a);
-    console.log(b);
     return a + b;
 }
 
@@ -33,7 +31,7 @@ let selectedNumber;
 let currentNumber = '';
 let storedNumber = '';
 let selectedOperator;
-let resultToggle = false;
+// let resultToggle = false;
 
 const numberButtonsArray = [...document.getElementsByClassName('numbers')];
 const numberButtonsContainer = document.getElementsByClassName('numberContainer')[0];
@@ -43,16 +41,11 @@ numberButtonsContainer.addEventListener('click', (e) => {
         if (currentNumber && storedNumber) {
             currentNumber = selectedOperator(storedNumber, currentNumber);
             storedNumber = '';
-            selectedOperator = undefined
             updateScreenValues();
         }
     }
     else if (e.target.className === 'numbers') {
         selectedNumber = Number(e.target.id);
-        if (resultToggle) {
-            storedNumber = currentNumber;
-            currentNumber = '';
-        }
         if (currentNumber === 0) {
             currentNumber = selectedNumber
         }
@@ -84,19 +77,21 @@ operatorContainer.addEventListener('click', (e) => {
                 operatorValue = add;
                 break;
         }
-        console.log('current', currentNumber, 'stored', storedNumber, 'selectedop', selectedOperator);
-        if (currentNumber && (!storedNumber || storedNumber === '')) {
+        console.log('current', currentNumber, 'stored', storedNumber, typeof storedNumber, 'selectedop', selectedOperator);
+        console.log(!storedNumber)
+        if (currentNumber && (!storedNumber && storedNumber !== 0)) {
             selectedOperator = operatorValue;
             storedNumber = currentNumber;
             currentNumber = ''
-            console.log(currentNumber)
             updateScreenValues();
         }
-        else if (storedNumber) {
-            currentNumber = selectedOperator(storedNumber, currentNumber);
-            storedNumber = '';
+        else if (storedNumber || storedNumber == '0') {
+            console.log(storedNumber)
+            storedNumber = selectedOperator(storedNumber, currentNumber);
+            selectedOperator = operatorValue;
+            currentNumber = '';
             updateScreenValues();
-            resultToggle = true;
+            console.log(storedNumber)
             console.log('b')
         }
     }
