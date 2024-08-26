@@ -1,4 +1,6 @@
 function add(a, b) {
+    console.log(a);
+    console.log(b);
     return a + b;
 }
 
@@ -31,6 +33,7 @@ let selectedNumber;
 let currentNumber = '';
 let storedNumber = '';
 let selectedOperator;
+let resultToggle = false;
 
 const numberButtonsArray = [...document.getElementsByClassName('numbers')];
 const numberButtonsContainer = document.getElementsByClassName('numberContainer')[0];
@@ -38,11 +41,18 @@ const numberButtonsContainer = document.getElementsByClassName('numberContainer'
 numberButtonsContainer.addEventListener('click', (e) => {
     if (e.target.id === 'equal') {
         if (currentNumber && storedNumber) {
-            currentNumber = selectedOperator(currentNumber, storedNumber)
+            currentNumber = selectedOperator(storedNumber, currentNumber);
+            storedNumber = '';
+            selectedOperator = undefined
+            updateScreenValues();
         }
     }
     else if (e.target.className === 'numbers') {
         selectedNumber = Number(e.target.id);
+        if (resultToggle) {
+            storedNumber = currentNumber;
+            currentNumber = '';
+        }
         if (currentNumber === 0) {
             currentNumber = selectedNumber
         }
@@ -58,31 +68,36 @@ numberButtonsContainer.addEventListener('click', (e) => {
 const operatorContainer = document.getElementsByClassName('operatorContainer')[0];
 
 operatorContainer.addEventListener('click', (e) => {
+    let operatorValue;
     if (e.target.className === 'operators') {
         switch (e.target.id) {
             case 'multiply':
-                selectedOperator = multiply;
+                operatorValue = multiply;
                 break;
             case 'divide':
-                selectedOperator = divide;
+                operatorValue = divide;
                 break;
             case 'subtract':
-                selectedOperator = subtract
+                operatorValue = subtract
                 break;
             case 'add':
-                selectedOperator = add;
+                operatorValue = add;
                 break;
         }
-        console.log(currentNumber);
-        if (currentNumber && !storedNumber) {
+        console.log('current', currentNumber, 'stored', storedNumber, 'selectedop', selectedOperator);
+        if (currentNumber && (!storedNumber || storedNumber === '')) {
+            selectedOperator = operatorValue;
             storedNumber = currentNumber;
             currentNumber = ''
             console.log(currentNumber)
             updateScreenValues();
         }
         else if (storedNumber) {
-            currentNumber = selectedOperator(currentNumber, storedNumber)
-            console.log(currentNumber)
+            currentNumber = selectedOperator(storedNumber, currentNumber);
+            storedNumber = '';
+            updateScreenValues();
+            resultToggle = true;
+            console.log('b')
         }
     }
 })
@@ -101,3 +116,20 @@ operatorContainer.addEventListener('click', (e) => {
 //number set, equals clicked, return current number as screen number and prev number
 //number set, operator clicked, second number set, operator clicked again
 //this should evaluate first operation, store result as prev value, set new operator, be ready for second value
+
+
+//current number is set
+//operator is clicked
+// when operator is clicked, set current operator value 
+// stored number is set to current number and current number is set to '' empty
+// select a new number
+// when a new number is set, operator should be set to empty/null
+// when operator is clicked again, value is calculated, stored num is set to empty, current value is set to result of 
+//operation
+// stored num is empty, operator is set to number that was clicked, current num is the result
+// on second click of operator, next number click should be the second operand
+
+
+//condition is current num is set, prev num is empty, and operator function is set 
+//starting condition is current num is set, prev num is empty, operator function is not set
+
